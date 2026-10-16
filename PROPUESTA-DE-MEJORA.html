@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retroalimentar para Aprender - Guía Práctica Docente Tutor</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        },
+                        emeraldNeon: '#10b981',
+                        cyanNeon: '#06b6d4',
+                        amberNeon: '#f59e0b',
+                        coralNeon: '#ef4444'
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 15px rgba(79, 70, 229, 0.4)' },
+                            '100%': { boxShadow: '0 0 25px rgba(16, 185, 129, 0.7)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Glassmorphism Styles */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Ambient Mesh Backgrounds */
+        .bg-mesh-light {
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.1) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(245, 158, 11, 0.08) 0px, transparent 50%);
+        }
+        .dark .bg-mesh-dark {
+            background-color: #0b0f17;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.25) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.2) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(6, 182, 212, 0.18) 0px, transparent 50%);
+        }
+
+        /* Progress Rings */
+        .progress-ring__circle {
+            transition: stroke-dashoffset 1s ease-in-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        /* Confetti Canvas Container */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.4);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(79, 70, 229, 0.7);
+        }
+
+        /* Print Mode Optimizations */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .no-print, nav, header, #theme-toggle, button, #confetti-canvas, #toast-container, #add-student-modal {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            div.tab-content {
+                display: block !important;
+                page-break-after: always;
+            }
+            .glass-panel, .glass-card {
+                background: white !important;
+                border: 1px solid #ccc !important;
+                backdrop-filter: none !important;
+                box-shadow: none !important;
+                color: black !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-mesh-light dark:bg-mesh-dark text-slate-800 dark:text-slate-100 min-h-screen font-sans transition-colors duration-500 selection:bg-brand-500 selection:text-white">
+
+    <!-- Canvas para animación de Confeti -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-gradient-to-r from-brand-600 via-indigo-600 to-emerald-600 text-white text-xs md:text-sm py-2 px-4 text-center font-medium shadow-md flex items-center justify-between no-print">
+        <div class="container mx-auto flex items-center justify-between">
+            <span class="flex items-center gap-2">
+                <i class="fa-solid font-bold fa-graduation-cap animate-bounce"></i>
+                <span><strong>Centro Escolar Rodrigo J. Leiva</strong> &bull; Modalidad Flexible - Módulo 5 MINED</span>
+            </span>
+            <span class="hidden md:inline-flex items-center gap-2 text-xs bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
+                <i class="fa-regular fa-bookmark"></i> Lenguaje y Literatura | 1.<sup>er</sup> Año de Bachillerato
+            </span>
+        </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="sticky top-0 z-40 glass-panel shadow-sm border-b border-slate-200/50 dark:border-slate-800/50 no-print transition-all">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 to-emeraldNeon flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
+                    <i class="fa-solid fa-comments-dollar text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg md:text-xl tracking-tight bg-gradient-to-r from-brand-700 via-indigo-600 to-emeraldNeon bg-clip-text text-transparent dark:from-brand-100 dark:to-emerald-400">
+                        Retroalimentar para aprender
+                    </h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Guía práctica para el docente tutor &bull; Lección 4</p>
+                </div>
+            </div>
+
+            <!-- Action Controls & Dark Mode Toggle -->
+            <div class="flex items-center gap-2 md:gap-3">
+                <button id="print-btn" onclick="triggerPrint()" class="flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition shadow-sm">
+                    <i class="fa-solid fa-print text-brand-600 dark:text-brand-400"></i>
+                    <span>Imprimir Guía</span>
+                </button>
+
+                <button id="theme-toggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-amber-400 hover:ring-2 hover:ring-brand-500/50 transition duration-300">
+                    <i id="theme-toggle-dark-icon" class="fa-solid fa-moon text-lg hidden"></i>
+                    <i id="theme-toggle-light-icon" class="fa-solid fa-sun text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs Bar -->
+        <nav class="border-t border-slate-200/50 dark:border-slate-800/50 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md overflow-x-auto no-scrollbar">
+            <div class="container mx-auto px-4 flex space-x-1 min-w-max py-1.5 text-xs font-semibold">
+                <button onclick="switchTab('diagnostico')" id="tab-diagnostico" class="tab-btn active-tab px-4 py-2 rounded-xl flex items-center gap-2 transition duration-200">
+                    <i class="fa-solid fa-chart-pie"></i> Diagnóstico & Contexto
+                </button>
+                <button onclick="switchTab('ciclo')" id="tab-ciclo" class="tab-btn px-4 py-2 rounded-xl flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition duration-200">
+                    <i class="fa-solid fa-arrows-spin"></i> Ciclo de Retroalimentación
+                </button>
+                <button onclick="switchTab('rubricas')" id="tab-rubricas" class="tab-btn px-4 py-2 rounded-xl flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition duration-200">
+                    <i class="fa-solid fa-list-check"></i> Rúbricas e Indicadores
+                </button>
+                <button onclick="switchTab('generador')" id="tab-generador" class="tab-btn px-4 py-2 rounded-xl flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition duration-200">
+                    <i class="fa-solid fa-wand-magic-sparkles text-brand-500"></i> Generador "2+1"
+                </button>
+                <button onclick="switchTab('practica')" id="tab-practica" class="tab-btn px-4 py-2 rounded-xl flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition duration-200">
+                    <i class="fa-solid fa-puzzle-piece text-emeraldNeon"></i> Práctica: El Párrafo
+                </button>
+                <button onclick="switchTab('evaluacion')" id="tab-evaluacion" class="tab-btn px-4 py-2 rounded-xl flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition duration-200">
+                    <i class="fa-solid fa-star text-amber-500"></i> Auto & Coevaluación
+                </button>
+                <button onclick="switchTab('seguimiento')" id="tab-seguimiento" class="tab-btn px-4 py-2 rounded-xl flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition duration-200">
+                    <i class="fa-solid fa-clipboard-user"></i> Ficha & Consultas
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="container mx-auto px-4 py-8 space-y-10">
+
+        <!-- ================================================================= -->
+        <!-- TAB 1: DIAGNÓSTICO Y MARCO INSTITUCIONAL -->
+        <!-- ================================================================= -->
+        <section id="section-diagnostico" class="tab-content space-y-8 animate-fadeIn">
+            
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-900 via-indigo-900 to-slate-900 text-white p-6 md:p-10 shadow-2xl border border-indigo-500/20">
+                <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -left-10 -top-10 w-72 h-72 bg-brand-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="relative z-10 max-w-3xl space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold text-emerald-300 border border-emerald-500/30">
+                        <i class="fa-solid fa-school"></i> Centro Escolar Rodrigo J. Leiva &bull; Modalidad Flexible
+                    </div>
+                    <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight leading-tight">
+                        Estrategia de Retroalimentación Formativa en <span class="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">Lenguaje y Literatura</span>
+                    </h2>
+                    <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+                        Acompañando a las y los estudiantes de Primer Año de Bachillerato en la apropiación activa de la <strong>Lección 4: El párrafo</strong> (Módulo 5 MINED). Fortaleciendo el aprendizaje autónomo, la cohesión sintáctica y la autorregulación.
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-4 text-xs font-semibold text-slate-300">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-400"></i> Tutoría Sabatina</span>
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-400"></i> Acompañamiento Semanal</span>
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-400"></i> Enfoque UES (2026)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quantitative Data Cards Section -->
+            <div>
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-xl font-bold tracking-tight">Indicadores Diagnósticos de Partida</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Datos recabados en la prueba diagnóstica y tutorías iniciales del Módulo 5</p>
+                    </div>
+                    <span class="text-xs font-semibold px-3 py-1 rounded-lg bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-300 border border-brand-200 dark:border-brand-800">
+                        N = 30 Estudiantes
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    
+                    <!-- Card 1 -->
+                    <div class="glass-card p-5 rounded-2xl shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between border-l-4 border-amber-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-xs uppercase tracking-wider font-bold text-amber-600 dark:text-amber-400">Dificultad Estructural</span>
+                                <h4 class="text-sm font-bold text-slate-700 dark:text-slate-200 mt-1">Estructura de Párrafo</h4>
+                            </div>
+                            <div class="relative flex items-center justify-center">
+                                <svg class="w-16 h-16" viewBox="0 0 36 36">
+                                    <path class="text-slate-200 dark:text-slate-700" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path class="text-amber-500 progress-ring__circle" stroke-dasharray="100, 100" stroke-dashoffset="53.3" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                </svg>
+                                <span class="absolute text-xs font-extrabold text-amber-600 dark:text-amber-400">46.7%</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">Presentan oraciones incompletas o falta de idea principal en textos escritos.</p>
+                        <div class="mt-4 w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5">
+                            <div class="bg-amber-500 h-1.5 rounded-full" style="width: 46.7%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="glass-card p-5 rounded-2xl shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between border-l-4 border-cyan-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-xs uppercase tracking-wider font-bold text-cyan-600 dark:text-cyan-400">Contexto Laboral</span>
+                                <h4 class="text-sm font-bold text-slate-700 dark:text-slate-200 mt-1">Estudiantes Trabajadores</h4>
+                            </div>
+                            <div class="relative flex items-center justify-center">
+                                <svg class="w-16 h-16" viewBox="0 0 36 36">
+                                    <path class="text-slate-200 dark:text-slate-700" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path class="text-cyan-500 progress-ring__circle" stroke-dasharray="100, 100" stroke-dashoffset="33.3" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                </svg>
+                                <span class="absolute text-xs font-extrabold text-cyan-600 dark:text-cyan-400">66.7%</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">Combinan estudios en Modalidad Flexible con jornadas de trabajo entre semana.</p>
+                        <div class="mt-4 w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5">
+                            <div class="bg-cyan-500 h-1.5 rounded-full" style="width: 66.7%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="glass-card p-5 rounded-2xl shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between border-l-4 border-coralNeon">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-xs uppercase tracking-wider font-bold text-rose-600 dark:text-rose-400">Sintaxis y Nexos</span>
+                                <h4 class="text-sm font-bold text-slate-700 dark:text-slate-200 mt-1">Uso de Conectores</h4>
+                            </div>
+                            <div class="relative flex items-center justify-center">
+                                <svg class="w-16 h-16" viewBox="0 0 36 36">
+                                    <path class="text-slate-200 dark:text-slate-700" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path class="text-rose-500 progress-ring__circle" stroke-dasharray="100, 100" stroke-dashoffset="50.0" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                </svg>
+                                <span class="absolute text-xs font-extrabold text-rose-600 dark:text-rose-400">50.0%</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">Omite conectores lógicos de causa, consecuencia o contraste en oraciones compuestas.</p>
+                        <div class="mt-4 w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5">
+                            <div class="bg-rose-500 h-1.5 rounded-full" style="width: 50.0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="glass-card p-5 rounded-2xl shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between border-l-4 border-emeraldNeon">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-xs uppercase tracking-wider font-bold text-emerald-600 dark:text-emerald-400">Meta Esperada</span>
+                                <h4 class="text-sm font-bold text-slate-700 dark:text-slate-200 mt-1">Mejora con Retroalimentación</h4>
+                            </div>
+                            <div class="relative flex items-center justify-center">
+                                <svg class="w-16 h-16" viewBox="0 0 36 36">
+                                    <path class="text-slate-200 dark:text-slate-700" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path class="text-emerald-500 progress-ring__circle" stroke-dasharray="100, 100" stroke-dashoffset="23.3" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                </svg>
+                                <span class="absolute text-xs font-extrabold text-emerald-600 dark:text-emerald-400">76.7%</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">Proyección de incremento en nivel logrado mediante tutoría asincrónica y técnica "2+1".</p>
+                        <div class="mt-4 w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5">
+                            <div class="bg-emerald-500 h-1.5 rounded-full" style="width: 76.7%"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Fundamental Pedagogical Principles -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-card p-6 rounded-2xl space-y-3 border-t-4 border-brand-500">
+                    <div class="w-10 h-10 rounded-xl bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-300 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-bullseye"></i>
+                    </div>
+                    <h4 class="font-bold text-base">1. Oportuna y Descriptiva</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        No se limita a asignar una nota numérica. Describe detalladamente la fortaleza encontrada y orienta con precisión sobre qué ajustar antes del siguiente encuentro sabatino.
+                    </p>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl space-y-3 border-t-4 border-emeraldNeon">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-300 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-heart-circle-check"></i>
+                    </div>
+                    <h4 class="font-bold text-base">2. Formato "2 Aciertos + 1 Mejora"</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Mantiene alta la motivación identificando dos aspectos bien elaborados (ej. buen uso de conectores) y propone un único reto accionable de mejora para evitar la sobrecarga.
+                    </p>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl space-y-3 border-t-4 border-cyanNeon">
+                    <div class="w-10 h-10 rounded-xl bg-cyan-100 dark:bg-cyan-900/50 text-cyan-600 dark:text-cyan-300 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <h4 class="font-bold text-base">3. Fomento de Autorregulación</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Capacita al estudiante en Modalidad Flexible para revisar sus propios escritos con la lista de cotejo antes de la entrega final en la guía de aprendizaje.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Cita Destacada MINED / UES -->
+            <div class="p-6 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex flex-col md:flex-row items-center gap-4">
+                <div class="text-4xl text-brand-500 opacity-60">
+                    <i class="fa-solid fa-quote-left"></i>
+                </div>
+                <div class="space-y-1">
+                    <blockquote class="text-xs md:text-sm italic text-slate-700 dark:text-slate-300 leading-relaxed">
+                        "En las Modalidades Flexibles de Educación Secundaria, la retroalimentación cualitativa actúa como el puente esencial entre el estudio independiente semanal y la tutoría presencial de fin de semana, garantizando que el estudiante no aprenda en la soledad, sino guiado por un andamiaje continuo."
+                    </blockquote>
+                    <p class="text-xs font-bold text-slate-500 dark:text-slate-400">
+                        &mdash; Dirección Nacional de Educación de Jóvenes y Adultos (MINED, 2010 / UES, 2026)
+                    </p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 2: CICLO DE RETROALIMENTACIÓN INTERACTIVO -->
+        <!-- ================================================================= -->
+        <section id="section-ciclo" class="tab-content hidden space-y-8 animate-fadeIn">
+            
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <span class="text-xs font-extrabold uppercase tracking-widest text-brand-600 dark:text-brand-400">Acompañamiento Tripartito</span>
+                <h3 class="text-2xl md:text-3xl font-extrabold">Ciclo Semanal de Retroalimentación</h3>
+                <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400">
+                    Navega paso a paso por la secuencia didáctica sabatina y asincrónica diseñada para la Lección 4: El párrafo.
+                </p>
+            </div>
+
+            <!-- Stepper Interactive Controls -->
+            <div class="flex justify-center items-center gap-3 no-print">
+                <button onclick="changeStep(-1)" id="prev-step-btn" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-brand-500 hover:text-white transition font-semibold text-xs disabled:opacity-40">
+                    <i class="fa-solid fa-chevron-left mr-1"></i> Anterior
+                </button>
+                <button onclick="toggleStepAutoplay()" id="autoplay-btn" class="px-4 py-2 rounded-xl bg-brand-600 text-white hover:bg-brand-700 transition font-semibold text-xs flex items-center gap-2">
+                    <i class="fa-solid fa-play" id="play-icon"></i>
+                    <span id="play-text">Reproducir Ciclo</span>
+                </button>
+                <button onclick="changeStep(1)" id="next-step-btn" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-brand-500 hover:text-white transition font-semibold text-xs">
+                    Siguiente <i class="fa-solid fa-chevron-right ml-1"></i>
+                </button>
+            </div>
+
+            <!-- Dynamic Timeline Card -->
+            <div class="relative max-w-4xl mx-auto">
+                
+                <!-- Connecting Animated Progress Line -->
+                <div class="hidden md:block absolute top-1/2 left-12 right-12 h-1 bg-slate-200 dark:bg-slate-800 -translate-y-1/2 z-0">
+                    <div id="timeline-progress-bar" class="h-full bg-gradient-to-r from-brand-500 via-emeraldNeon to-cyanNeon w-0 transition-all duration-500"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+                    
+                    <!-- Step 1 -->
+                    <div id="step-card-1" class="timeline-step glass-card p-6 rounded-2xl border-2 border-brand-500 shadow-xl transition-all duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="w-10 h-10 rounded-full bg-brand-600 text-white font-extrabold flex items-center justify-center text-sm shadow-md ring-4 ring-brand-100 dark:ring-brand-900/50">
+                                1
+                            </span>
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-brand-100 dark:bg-brand-900/60 text-brand-700 dark:text-brand-300">
+                                Sábado Presencial
+                            </span>
+                        </div>
+                        <h4 class="font-bold text-base text-slate-800 dark:text-white mb-2">Diagnóstico y Modelado</h4>
+                        <div class="space-y-3 text-xs text-slate-600 dark:text-slate-300">
+                            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700">
+                                <strong class="text-brand-600 dark:text-brand-400 block mb-1"><i class="fa-solid fa-chalkboard-user mr-1"></i> Rol Docente Tutor:</strong>
+                                Presenta la Lección 4. Modela la estructura de párrafo (introductorio, desarrollo, conclusión) analizando el texto modelo <em>"El alba"</em>.
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700">
+                                <strong class="text-emerald-600 dark:text-emerald-400 block mb-1"><i class="fa-solid fa-user-pen mr-1"></i> Rol Estudiante:</strong>
+                                Realiza lectura guiada, identifica oraciones secundarias y aclara dudas sobre el uso de conectores.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div id="step-card-2" class="timeline-step glass-card p-6 rounded-2xl border-2 border-transparent hover:border-emerald-500 shadow-sm transition-all duration-300 opacity-70">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="w-10 h-10 rounded-full bg-slate-300 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-extrabold flex items-center justify-center text-sm shadow-md step-num">
+                                2
+                            </span>
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300">
+                                Semana (Asincrónico)
+                            </span>
+                        </div>
+                        <h4 class="font-bold text-base text-slate-800 dark:text-white mb-2">Producción e Interacción</h4>
+                        <div class="space-y-3 text-xs text-slate-600 dark:text-slate-300">
+                            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700">
+                                <strong class="text-brand-600 dark:text-brand-400 block mb-1"><i class="fa-solid fa-comments mr-1"></i> Rol Docente Tutor:</strong>
+                                Recibe avances digitales/físicos. Envía micro-retroalimentación formativa con el formato <strong>"2 aciertos + 1 mejora"</strong>.
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700">
+                                <strong class="text-emerald-600 dark:text-emerald-400 block mb-1"><i class="fa-solid fa-pen-ruler mr-1"></i> Rol Estudiante:</strong>
+                                Redacta su borrador sobre el caso <em>Thomas Alva Edison</em> y aplica las sugerencias de mejora recibidas.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div id="step-card-3" class="timeline-step glass-card p-6 rounded-2xl border-2 border-transparent hover:border-cyan-500 shadow-sm transition-all duration-300 opacity-70">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="w-10 h-10 rounded-full bg-slate-300 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-extrabold flex items-center justify-center text-sm shadow-md step-num">
+                                3
+                            </span>
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-cyan-100 dark:bg-cyan-900/60 text-cyan-700 dark:text-cyan-300">
+                                Sábado Consolidación
+                            </span>
+                        </div>
+                        <h4 class="font-bold text-base text-slate-800 dark:text-white mb-2">Coevaluación y Cierre</h4>
+                        <div class="space-y-3 text-xs text-slate-600 dark:text-slate-300">
+                            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700">
+                                <strong class="text-brand-600 dark:text-brand-400 block mb-1"><i class="fa-solid fa-graduation-cap mr-1"></i> Rol Docente Tutor:</strong>
+                                Facilita dinámica de coevaluación en parejas con la lista de cotejo y atiende dudas del buzón <em>"Mi Duda"</em>.
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700">
+                                <strong class="text-emerald-600 dark:text-emerald-400 block mb-1"><i class="fa-solid fa-users text-emerald-500 mr-1"></i> Rol Estudiante:</strong>
+                                Revisa el escrito de un compañero, intercambia observaciones constructivas y entrega versión final.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Weekly Activity Table Breakdown -->
+            <div class="glass-card p-6 rounded-2xl space-y-4">
+                <h4 class="font-bold text-base flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-week text-brand-500"></i> Planificación Semanal Recomendada &bull; Módulo 5
+                </h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider">
+                                <th class="p-3 rounded-l-xl">Día / Momento</th>
+                                <th class="p-3">Actividad del Estudiante</th>
+                                <th class="p-3">Acción del Tutor</th>
+                                <th class="p-3 rounded-r-xl">Evidencia Esperada</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200/60 dark:divide-slate-800">
+                            <tr>
+                                <td class="p-3 font-bold text-brand-600 dark:text-brand-400">Sábado 1 (Presencial)</td>
+                                <td class="p-3">Análisis de "El alba" y conceptualización del párrafo.</td>
+                                <td class="p-3">Explicación dialogada y modelado de conectores.</td>
+                                <td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 font-medium">Guía Pág. 112</span></td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-bold text-cyan-600 dark:text-cyan-400">Martes (Asincrónico)</td>
+                                <td class="p-3">Redacción de borrador sobre la invención de la bombilla (Edison).</td>
+                                <td class="p-3">Revisión de consultas exprés en grupo remoto.</td>
+                                <td class="p-3"><span class="px-2 py-0.5 rounded bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 font-medium">Foto / Archivo borrador</span></td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-bold text-amber-600 dark:text-amber-400">Jueves (Asincrónico)</td>
+                                <td class="p-3">Aplicación de la plantilla "2 aciertos + 1 mejora" enviada.</td>
+                                <td class="p-3">Envío de retroalimentación cualitativa individualizada.</td>
+                                <td class="p-3"><span class="px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 font-medium">Comentario en la ficha</span></td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-bold text-emerald-600 dark:text-emerald-400">Sábado 2 (Presencial)</td>
+                                <td class="p-3">Coevaluación en parejas y entrega de versión corregida.</td>
+                                <td class="p-3">Sistematización en la Ficha de Seguimiento.</td>
+                                <td class="p-3"><span class="px-2 py-0.5 rounded bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 font-medium">Texto corregido final</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 3: RÚBRICAS E INDICADORES (LECCIÓN 4) -->
+        <!-- ================================================================= -->
+        <section id="section-rubricas" class="tab-content hidden space-y-6 animate-fadeIn">
+            
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-2xl font-extrabold tracking-tight">Rúbrica Holística de Evaluación</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Criterios e indicadores alineados con los programas de estudio de Lenguaje 1.er Año (MINED)</p>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="flex flex-wrap gap-1.5 text-xs font-semibold no-print">
+                    <button onclick="filterRubric('todos')" id="filter-todos" class="rubric-filter-btn px-3 py-1.5 rounded-xl bg-brand-600 text-white shadow-sm transition">Todos</button>
+                    <button onclick="filterRubric('estructura')" id="filter-estructura" class="rubric-filter-btn px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition">Estructura</button>
+                    <button onclick="filterRubric('cohesion')" id="filter-cohesion" class="rubric-filter-btn px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition">Cohesión & Nexos</button>
+                    <button onclick="filterRubric('comprension')" id="filter-comprension" class="rubric-filter-btn px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition">Comprensión LECTORA</button>
+                </div>
+            </div>
+
+            <!-- Rubric Matrix Cards -->
+            <div class="grid grid-cols-1 gap-4" id="rubric-cards-container">
+                
+                <!-- Rubric Item 1 -->
+                <div class="rubric-card glass-card p-5 rounded-2xl space-y-3" data-category="estructura">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-300">
+                            Criterio 1 &bull; Estructura
+                        </span>
+                        <span class="text-xs font-bold text-slate-500">Ponderación: 30%</span>
+                    </div>
+                    <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100">Organización y delimitación de la Idea Principal</h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs pt-1">
+                        <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50">
+                            <span class="font-bold text-emerald-700 dark:text-emerald-400 block mb-1">🟢 Logrado (3 pts)</span>
+                            <p class="text-slate-600 dark:text-slate-300">Expresa una idea central clara y delimitada, respaldada por oraciones secundarias coherentes de introducción y cierre.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50">
+                            <span class="font-bold text-amber-700 dark:text-amber-400 block mb-1">🟡 En Proceso (2 pts)</span>
+                            <p class="text-slate-600 dark:text-slate-300">La idea principal es identificable pero se pierde entre oraciones secundarias redundantes o incompletas.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/50">
+                            <span class="font-bold text-rose-700 dark:text-rose-400 block mb-1">🔴 Por Iniciar (1 pt)</span>
+                            <p class="text-slate-600 dark:text-slate-300">Conjunto de oraciones inconexas sin una idea temática definida o con faltas gramaticales severas.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rubric Item 2 -->
+                <div class="rubric-card glass-card p-5 rounded-2xl space-y-3" data-category="cohesion">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-300">
+                            Criterio 2 &bull; Cohesión
+                        </span>
+                        <span class="text-xs font-bold text-slate-500">Ponderación: 30%</span>
+                    </div>
+                    <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100">Uso de Conectores Sintácticos y Signos de Puntuación</h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs pt-1">
+                        <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50">
+                            <span class="font-bold text-emerald-700 dark:text-emerald-400 block mb-1">🟢 Logrado (3 pts)</span>
+                            <p class="text-slate-600 dark:text-slate-300">Emplea adecuadamente conectores de causa, consecuencia o contraste (ej. <em>sin embargo, por lo tanto, además</em>) y signos ortográficos.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50">
+                            <span class="font-bold text-amber-700 dark:text-amber-400 block mb-1">🟡 En Proceso (2 pts)</span>
+                            <p class="text-slate-600 dark:text-slate-300">Utiliza únicamente conectores repetitivos (ej. "y", "entonces") o confunde coma y punto y seguido.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/50">
+                            <span class="font-bold text-rose-700 dark:text-rose-400 block mb-1">🔴 Por Iniciar (1 pt)</span>
+                            <p class="text-slate-600 dark:text-slate-300">Ausencia de conectores; las oraciones se presentan yuxtapuestas sin nexos que indiquen la relación lógica.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rubric Item 3 -->
+                <div class="rubric-card glass-card p-5 rounded-2xl space-y-3" data-category="comprension">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-cyan-100 dark:bg-cyan-900/50 text-cyan-600 dark:text-cyan-300">
+                            Criterio 3 &bull; Comprensión
+                        </span>
+                        <span class="text-xs font-bold text-slate-500">Ponderación: 20%</span>
+                    </div>
+                    <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100">Análisis Textual y Tipología del Párrafo</h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs pt-1">
+                        <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50">
+                            <span class="font-bold text-emerald-700 dark:text-emerald-400 block mb-1">🟢 Logrado (3 pts)</span>
+                            <p class="text-slate-600 dark:text-slate-300">Distingue con precisión la función del párrafo (expositivo, argumentativo, narrativo, descriptivo) en el texto modelo <em>"El alba"</em>.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50">
+                            <span class="font-bold text-amber-700 dark:text-amber-400 block mb-1">🟡 En Proceso (2 pts)</span>
+                            <p class="text-slate-600 dark:text-slate-300">Reconoce el tema general del texto pero se le dificulta clasificar la intención comunicativa del párrafo especifico.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/50">
+                            <span class="font-bold text-rose-700 dark:text-rose-400 block mb-1">🔴 Por Iniciar (1 pt)</span>
+                            <p class="text-slate-600 dark:text-slate-300">No identifica la idea central ni clasifica la tipología del párrafo según las actividades del Módulo 5.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rubric Item 4 -->
+                <div class="rubric-card glass-card p-5 rounded-2xl space-y-3" data-category="estructura">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-300">
+                            Criterio 4 &bull; Autorregulación
+                        </span>
+                        <span class="text-xs font-bold text-slate-500">Ponderación: 20%</span>
+                    </div>
+                    <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100">Aplicación de Correcciones y Trabajo Colaborativo</h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs pt-1">
+                        <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50">
+                            <span class="font-bold text-emerald-700 dark:text-emerald-400 block mb-1">🟢 Logrado (3 pts)</span>
+                            <p class="text-slate-600 dark:text-slate-300">Modifica activamente sus borrradores a partir de la retroalimentación "2+1" y realiza aportes valiosos en la coevaluación.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50">
+                            <span class="font-bold text-amber-700 dark:text-amber-400 block mb-1">🟡 En Proceso (2 pts)</span>
+                            <p class="text-slate-600 dark:text-slate-300">Aplica parcialmente las sugerencias de mejora pero olvida revisar la ortografía final antes de la tutoría sabatina.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/50">
+                            <span class="font-bold text-rose-700 dark:text-rose-400 block mb-1">🔴 Por Iniciar (1 pt)</span>
+                            <p class="text-slate-600 dark:text-slate-300">Entrega la versión inicial sin corrección alguna o se muestra apático durante las actividades grupales.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 4: GENERADOR DE RETROALIMENTACIÓN "2 ACIERTOS + 1 MEJORA" -->
+        <!-- ================================================================= -->
+        <section id="section-generador" class="tab-content hidden space-y-8 animate-fadeIn">
+            
+            <div class="max-w-3xl mx-auto text-center space-y-2">
+                <span class="text-xs font-bold uppercase tracking-widest text-brand-600 dark:text-brand-400">Herramienta Interactiva para el Tutor</span>
+                <h3 class="text-2xl md:text-3xl font-extrabold">Generador "2 Aciertos + 1 Mejora"</h3>
+                <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400">
+                    Construye en segundos un mensaje pedagógico motivador, enfocado en el estudiante y listo para enviar vía canal de comunicación asincrónico.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Form Inputs Panel -->
+                <div class="lg:col-span-7 glass-card p-6 rounded-2xl space-y-5">
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nombre del Estudiante:</label>
+                            <input type="text" id="fb-student-name" placeholder="Ej. Carlos Martínez" value="Carlos Martínez" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-brand-500 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Actividad Evaluada:</label>
+                            <select id="fb-activity" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-brand-500 outline-none transition">
+                                <option value="Redacción de Párrafo (Caso Edison)">Redacción de Párrafo (Caso Edison)</option>
+                                <option value="Análisis de Texto 'El alba'">Análisis de Texto "El alba"</option>
+                                <option value="Identificación de Conectores">Identificación de Conectores</option>
+                                <option value="Borrador Guía Semanal Módulo 5">Borrador Guía Semanal Módulo 5</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Preset Selectors for Quick Insert -->
+                    <div class="p-3 rounded-xl bg-brand-50/60 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-800/60 space-y-2">
+                        <span class="text-[11px] font-bold text-brand-700 dark:text-brand-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-bolt text-amber-500"></i> Plantillas Rápidas (Lección 4):
+                        </span>
+                        <div class="flex flex-wrap gap-1.5 text-[11px]">
+                            <button type="button" onclick="loadPreset('cohesion')" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 hover:bg-brand-100 text-slate-700 dark:text-slate-200 border transition">✨ Excelente Cohesión</button>
+                            <button type="button" onclick="loadPreset('idea')" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 hover:bg-brand-100 text-slate-700 dark:text-slate-200 border transition">💡 Idea Principal Clara</button>
+                            <button type="button" onclick="loadPreset('conectores')" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 hover:bg-brand-100 text-slate-700 dark:text-slate-200 border transition">🔗 Ajustar Conectores</button>
+                        </div>
+                    </div>
+
+                    <!-- Acierto 1 -->
+                    <div>
+                        <label class="block text-xs font-bold text-emerald-600 dark:text-emerald-400 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-circle-check"></i> Primer Acierto (Fortaleza Destacada):
+                        </label>
+                        <textarea id="fb-acierto-1" rows="2" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none transition" placeholder="Ej. Has identificado con absoluta claridad la idea principal del párrafo introductorio."></textarea>
+                    </div>
+
+                    <!-- Acierto 2 -->
+                    <div>
+                        <label class="block text-xs font-bold text-emerald-600 dark:text-emerald-400 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-circle-check"></i> Segundo Acierto (Detalle Positivo):
+                        </label>
+                        <textarea id="fb-acierto-2" rows="2" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none transition" placeholder="Ej. Tu ortografía y delimitación de oraciones mediante comas ha mejorado significativamente."></textarea>
+                    </div>
+
+                    <!-- Oportunidad de Mejora -->
+                    <div>
+                        <label class="block text-xs font-bold text-amber-600 dark:text-amber-400 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-circle-exclamation"></i> Oportunidad de Mejora (Reto Accionable):
+                        </label>
+                        <textarea id="fb-mejora" rows="2" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-amber-500 outline-none transition" placeholder="Ej. Te sugiero conectar la segunda oración usando el nexo 'sin embargo' para darle mayor fluidez. Revisa la pág. 115 del Módulo."></textarea>
+                    </div>
+
+                    <!-- Tone selector -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Cierre / Frase Motivadora:</label>
+                        <select id="fb-cierre" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-brand-500 outline-none transition">
+                            <option value="¡Sigue así, vas por un excelente camino hacia la tutoría del sábado!">¡Sigue así, vas por un excelente camino hacia la tutoría del sábado!</option>
+                            <option value="¡Tu esfuerzo y perseverancia en la modalidad flexible son muy valiosos!">¡Tu esfuerzo y perseverancia en la modalidad flexible son muy valiosos!</option>
+                            <option value="¡Espero con gusto tu versión revisada en la próxima sesión presencial!">¡Espero con gusto tu versión revisada en la próxima sesión presencial!</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <!-- Live Preview Card Panel -->
+                <div class="lg:col-span-5 space-y-4 sticky top-28">
+                    
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Vista Previa del Mensaje</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700">Listo para Copiar</span>
+                    </div>
+
+                    <div id="feedback-preview-card" class="glass-card p-6 rounded-2xl border-2 border-brand-500/40 space-y-4 shadow-xl relative bg-gradient-to-b from-white to-slate-50/80 dark:from-slate-900 dark:to-slate-900/90">
+                        
+                        <!-- Card Header -->
+                        <div class="flex items-center gap-3 border-b border-slate-200/80 dark:border-slate-800 pb-3">
+                            <div class="w-9 h-9 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-sm">
+                                <i class="fa-solid fa-comment-dots"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-sm text-slate-800 dark:text-white" id="pv-student">Carlos Martínez</h4>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400" id="pv-activity">Redacción de Párrafo (Caso Edison)</p>
+                            </div>
+                        </div>
+
+                        <!-- Card Body -->
+                        <div class="space-y-3 text-xs leading-relaxed text-slate-700 dark:text-slate-300">
+                            <p class="font-medium text-slate-600 dark:text-slate-400">¡Hola, <span id="pv-greeting-name" class="font-bold text-slate-800 dark:text-slate-200">Carlos</span>! He revisado tu avance y quiero compartirte esta retroalimentación:</p>
+                            
+                            <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 space-y-1">
+                                <span class="font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5 text-[11px]">
+                                    <i class="fa-solid fa-circle-check"></i> Lo que has logrado muy bien:
+                                </span>
+                                <ul class="list-disc list-inside pl-1 space-y-0.5 text-slate-700 dark:text-slate-300">
+                                    <li id="pv-a1">Has identificado con absoluta claridad la idea principal del párrafo introductorio.</li>
+                                    <li id="pv-a2">Tu ortografía y delimitación de oraciones mediante comas ha mejorado significativamente.</li>
+                                </ul>
+                            </div>
+
+                            <div class="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 space-y-1">
+                                <span class="font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1.5 text-[11px]">
+                                    <i class="fa-solid fa-lightbulb"></i> Tu reto de mejora para esta semana:
+                                </span>
+                                <p id="pv-mejora-text" class="text-slate-700 dark:text-slate-300 pl-1">Te sugiero conectar la segunda oración usando el nexo 'sin embargo' para darle mayor fluidez. Revisa la pág. 115 del Módulo.</p>
+                            </div>
+
+                            <p class="italic text-brand-600 dark:text-brand-400 font-medium pt-1" id="pv-cierre-text">
+                                ¡Sigue así, vas por un excelente camino hacia la tutoría del sábado!
+                            </p>
+                        </div>
+
+                        <!-- Card Footer -->
+                        <div class="pt-2 border-t border-slate-200/80 dark:border-slate-800 flex justify-between items-center text-[10px] text-slate-400">
+                            <span>Centro Escolar Rodrigo J. Leiva</span>
+                            <span>Lenguaje y Literatura &bull; Módulo 5</span>
+                        </div>
+
+                    </div>
+
+                    <!-- Actions -->
+                    <button onclick="copyFeedbackToClipboard()" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-bold text-xs shadow-lg shadow-brand-500/25 flex items-center justify-center gap-2 transition duration-200">
+                        <i class="fa-solid fa-copy text-sm"></i>
+                        <span>Copiar Retroalimentación para Enviar</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 5: PRÁCTICA INTERACTIVA "¿QUÉ TIPO DE PÁRRAFO ES?" -->
+        <!-- ================================================================= -->
+        <section id="section-practica" class="tab-content hidden space-y-8 animate-fadeIn">
+            
+            <div class="max-w-3xl mx-auto text-center space-y-2">
+                <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Lección 4 &bull; Ejercitación Guiada</span>
+                <h3 class="text-2xl md:text-3xl font-extrabold">Práctica Interactiva: Estructura del Párrafo</h3>
+                <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400">
+                    Aplica los conceptos del Módulo 5 con casos prácticos basados en las lecturas de <em>Thomas Alva Edison</em> y el texto <em>"El alba"</em>.
+                </p>
+            </div>
+
+            <!-- Quiz Container Card -->
+            <div class="max-w-3xl mx-auto glass-card p-6 md:p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 space-y-6 shadow-xl">
+                
+                <!-- Quiz Progress & Score Header -->
+                <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-slate-500">Pregunta:</span>
+                        <span id="quiz-question-num" class="px-2.5 py-0.5 rounded-full bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-300 font-extrabold text-xs">1 / 3</span>
+                    </div>
+
+                    <!-- Stars Score counter -->
+                    <div class="flex items-center gap-1.5 text-amber-500 font-extrabold text-sm">
+                        <i class="fa-solid fa-star animate-pulse"></i>
+                        <span id="quiz-score-stars">0 / 3 Estrellas</span>
+                    </div>
+                </div>
+
+                <!-- Dynamic Question Content -->
+                <div id="quiz-question-box" class="space-y-4">
+                    
+                    <!-- Question Text & Fragment -->
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-base text-slate-800 dark:text-white" id="quiz-title">
+                            Analiza el siguiente fragmento adaptado de la Lección 4:
+                        </h4>
+                        
+                        <!-- Text Sample Callout -->
+                        <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border-l-4 border-brand-500 text-xs md:text-sm italic text-slate-700 dark:text-slate-300 leading-relaxed" id="quiz-excerpt">
+                            "Thomas Alva Edison realizó más de mil intentos fallidos antes de perfeccionar la bombilla incandescente. Sin embargo, su perseverancia y rigor experimental demostraron que el fracaso es únicamente el primer paso hacia la innovación técnica."
+                        </div>
+                    </div>
+
+                    <p class="text-xs font-bold text-slate-600 dark:text-slate-300" id="quiz-prompt">
+                        ¿Qué tipo de párrafo según su intención comunicativa predomina en este ejemplo y cuál es su conector de cohesión clave?
+                    </p>
+
+                    <!-- Answer Options Grid -->
+                    <div class="grid grid-cols-1 gap-3 pt-2" id="quiz-options-container">
+                        <!-- Options generated dynamically via JS -->
+                    </div>
+
+                </div>
+
+                <!-- Feedback Banner Result -->
+                <div id="quiz-result-banner" class="hidden p-4 rounded-2xl border text-xs space-y-2 transition-all">
+                    <div class="flex items-center gap-2 font-bold text-sm" id="quiz-banner-title">
+                        <!-- Filled by JS -->
+                    </div>
+                    <p id="quiz-banner-explanation" class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                        <!-- Filled by JS -->
+                    </p>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex justify-between items-center pt-4 border-t border-slate-200 dark:border-slate-800">
+                    <button onclick="resetQuiz()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 transition">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Reiniciar Práctica
+                    </button>
+                    <button id="quiz-next-btn" onclick="nextQuizQuestion()" disabled class="px-5 py-2.5 rounded-xl text-xs font-bold bg-brand-600 text-white hover:bg-brand-700 disabled:opacity-40 transition">
+                        Siguiente Pregunta <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 6: AUTOEVALUACIÓN Y COEVALUACIÓN -->
+        <!-- ================================================================= -->
+        <section id="section-evaluacion" class="tab-content hidden space-y-8 animate-fadeIn">
+            
+            <div class="max-w-3xl mx-auto text-center space-y-2">
+                <span class="text-xs font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400">Autorregulación del Estudiante</span>
+                <h3 class="text-2xl md:text-3xl font-extrabold">Autoevaluación y Coevaluación</h3>
+                <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400">
+                    Lista de cotejo interactiva para el alumnado. Completa los 5 ítems para habilitar el reporte de logros.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Self Assessment Checklist (Interactive) -->
+                <div class="lg:col-span-7 glass-card p-6 rounded-3xl space-y-5">
+                    <h4 class="font-extrabold text-base flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                        <span><i class="fa-solid fa-list-check text-brand-500 mr-2"></i> Mi Lista de Cotejo (Autoevaluación)</span>
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-300" id="checklist-counter">0 / 5 Cumplidos</span>
+                    </h4>
+
+                    <div class="space-y-3" id="self-eval-list">
+                        
+                        <!-- Check Item 1 -->
+                        <label class="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 cursor-pointer hover:bg-brand-50/50 transition">
+                            <input type="checkbox" onchange="updateSelfEval()" class="eval-checkbox mt-0.5 rounded text-brand-600 focus:ring-brand-500 w-4 h-4">
+                            <div class="text-xs space-y-0.5">
+                                <span class="font-bold text-slate-800 dark:text-slate-200 block">1. Identificación de la Idea Central</span>
+                                <p class="text-slate-500 dark:text-slate-400">Expresé con claridad el tema principal del párrafo antes de redactar las oraciones secundarias.</p>
+                            </div>
+                        </label>
+
+                        <!-- Check Item 2 -->
+                        <label class="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 cursor-pointer hover:bg-brand-50/50 transition">
+                            <input type="checkbox" onchange="updateSelfEval()" class="eval-checkbox mt-0.5 rounded text-brand-600 focus:ring-brand-500 w-4 h-4">
+                            <div class="text-xs space-y-0.5">
+                                <span class="font-bold text-slate-800 dark:text-slate-200 block">2. Uso de Conectores Lógicos</span>
+                                <p class="text-slate-500 dark:text-slate-400">Utilicé al menos dos conectores de cohesión (ej. <em>sin embargo, por consiguiente, además</em>).</p>
+                            </div>
+                        </label>
+
+                        <!-- Check Item 3 -->
+                        <label class="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 cursor-pointer hover:bg-brand-50/50 transition">
+                            <input type="checkbox" onchange="updateSelfEval()" class="eval-checkbox mt-0.5 rounded text-brand-600 focus:ring-brand-500 w-4 h-4">
+                            <div class="text-xs space-y-0.5">
+                                <span class="font-bold text-slate-800 dark:text-slate-200 block">3. Puntuación y Ortografía</span>
+                                <p class="text-slate-500 dark:text-slate-400">Inicié con mayúscula, delimité las oraciones con comas y finalicé con punto y aparte.</p>
+                            </div>
+                        </label>
+
+                        <!-- Check Item 4 -->
+                        <label class="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 cursor-pointer hover:bg-brand-50/50 transition">
+                            <input type="checkbox" onchange="updateSelfEval()" class="eval-checkbox mt-0.5 rounded text-brand-600 focus:ring-brand-500 w-4 h-4">
+                            <div class="text-xs space-y-0.5">
+                                <span class="font-bold text-slate-800 dark:text-slate-200 block">4. Aplicación de Sugerencias "2+1"</span>
+                                <p class="text-slate-500 dark:text-slate-400">Revisé las observaciones enviadas por mi tutor docente durante la semana y corregí el borrador.</p>
+                            </div>
+                        </label>
+
+                        <!-- Check Item 5 -->
+                        <label class="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 cursor-pointer hover:bg-brand-50/50 transition">
+                            <input type="checkbox" onchange="updateSelfEval()" class="eval-checkbox mt-0.5 rounded text-brand-600 focus:ring-brand-500 w-4 h-4">
+                            <div class="text-xs space-y-0.5">
+                                <span class="font-bold text-slate-800 dark:text-slate-200 block">5. Coevaluación en Pareja</span>
+                                <p class="text-slate-500 dark:text-slate-400">Leí el trabajo de mi compañero(a) de clase e intercambié observaciones respetuosas.</p>
+                            </div>
+                        </label>
+
+                    </div>
+                </div>
+
+                <!-- Progress Ring & Celebration Card -->
+                <div class="lg:col-span-5 space-y-6">
+                    
+                    <div class="glass-card p-6 rounded-3xl text-center space-y-4 border border-slate-200/80 dark:border-slate-800 shadow-xl">
+                        <h4 class="font-bold text-sm text-slate-700 dark:text-slate-200">Porcentaje de Cumplimiento Autoevaluado</h4>
+                        
+                        <!-- Circular SVG gauge -->
+                        <div class="relative w-36 h-36 mx-auto flex items-center justify-center">
+                            <svg class="w-full h-full" viewBox="0 0 36 36">
+                                <path class="text-slate-200 dark:text-slate-700" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path id="eval-circle-progress" class="text-brand-600 progress-ring__circle transition-all duration-700" stroke-dasharray="100, 100" stroke-dashoffset="100" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            </svg>
+                            <div class="absolute flex flex-col items-center">
+                                <span id="eval-percentage-text" class="text-2xl font-black text-slate-800 dark:text-white">0%</span>
+                                <span class="text-[10px] text-slate-400 uppercase font-semibold">Avance</span>
+                            </div>
+                        </div>
+
+                        <!-- Status Badge -->
+                        <div id="eval-status-badge" class="p-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-xs text-slate-600 dark:text-slate-300 font-medium">
+                            Completa los ítems para evaluar tu progreso en la Lección 4.
+                        </div>
+
+                        <button onclick="triggerConfetti()" id="confetti-btn" disabled class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-xs shadow-md disabled:opacity-40 transition">
+                            <i class="fa-solid fa-gift mr-1"></i> Celebra tu Avance (100%)
+                        </button>
+                    </div>
+
+                    <!-- Coevaluación en Pareja Form -->
+                    <div class="glass-card p-5 rounded-3xl space-y-3">
+                        <h5 class="font-bold text-xs text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                            <i class="fa-solid fa-users text-cyan-500"></i> Ficha Rápida de Coevaluación en Parejas
+                        </h5>
+                        <div class="space-y-2 text-xs">
+                            <input type="text" id="coeval-peer-name" placeholder="Nombre de tu compañero(a)..." class="w-full px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none">
+                            <textarea id="coeval-comment" rows="2" placeholder="Escribe 1 fortaleza que observas en su párrafo..." class="w-full px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none"></textarea>
+                            <button onclick="saveCoevalObservation()" class="w-full py-2 rounded-xl bg-cyan-600 text-white font-bold text-xs hover:bg-cyan-700 transition">
+                                Registrar Observación de Pareja
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 7: FICHA DE SEGUIMIENTO Y BUZÓN "MI DUDA" -->
+        <!-- ================================================================= -->
+        <section id="section-seguimiento" class="tab-content hidden space-y-8 animate-fadeIn">
+            
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-2xl font-extrabold tracking-tight">Ficha de Seguimiento del Docente Tutor</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                        Registro dinámico de avances por estudiante con almacenamiento local (localStorage).
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-2 no-print">
+                    <button onclick="addStudentRow()" class="px-3 py-2 rounded-xl bg-brand-600 text-white font-semibold text-xs hover:bg-brand-700 transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-user-plus"></i> Agregar Estudiante
+                    </button>
+                    <button onclick="resetTrackingTable()" class="px-3 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold text-xs hover:bg-slate-300 dark:hover:bg-slate-700 transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-rotate"></i> Cargar Ejemplos
+                    </button>
+                </div>
+            </div>
+
+            <!-- Printable Tracking Table -->
+            <div class="glass-card p-6 rounded-3xl space-y-4 shadow-xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse" id="tracking-table">
+                        <thead>
+                            <tr class="bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider">
+                                <th class="p-3 rounded-l-xl">Estudiante</th>
+                                <th class="p-3">Nivel Párrafo</th>
+                                <th class="p-3">Conectores</th>
+                                <th class="p-3">Retroalimentación "2+1"</th>
+                                <th class="p-3">Estado Guía</th>
+                                <th class="p-3 rounded-r-xl no-print text-center">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tracking-tbody" class="divide-y divide-slate-200/60 dark:divide-slate-800">
+                            <!-- Rows generated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Buzón "Mi Duda" & Protocolo de Consultas -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Student Query Box -->
+                <div class="glass-card p-6 rounded-3xl space-y-4">
+                    <h4 class="font-extrabold text-base text-slate-800 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-circle-question text-amber-500"></i> Buzón Digital "Mi Duda" (Para el Estudiante)
+                    </h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                        ¿Tienes inquietudes sobre la redacción de tu párrafo antes del sábado? Envíala directamente a tu tutor.
+                    </p>
+
+                    <form onsubmit="submitStudentQuery(event)" class="space-y-3">
+                        <input type="text" id="query-student-name" required placeholder="Tu Nombre Completo..." class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none">
+                        <textarea id="query-text" required rows="3" placeholder="Escribe tu consulta sobre la Lección 4 o el uso de conectores..." class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none"></textarea>
+                        <button type="submit" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs transition shadow-md">
+                            <i class="fa-solid fa-paper-plane mr-1"></i> Enviar Consulta al Tutor
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Tutor Contact Protocol -->
+                <div class="glass-card p-6 rounded-3xl space-y-4">
+                    <h4 class="font-extrabold text-base text-slate-800 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-brand-500"></i> Protocolo de Atención Presencial y Remota
+                    </h4>
+                    
+                    <div class="space-y-3 text-xs text-slate-600 dark:text-slate-300">
+                        <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-start gap-3">
+                            <i class="fa-solid fa-building-columns text-brand-500 text-base mt-0.5"></i>
+                            <div>
+                                <strong class="text-slate-800 dark:text-slate-200 block">Tutorías Presenciales Sabatinas:</strong>
+                                Centro Escolar Rodrigo J. Leiva &bull; 7:30 a.m. a 12:00 m.
+                            </div>
+                        </div>
+
+                        <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-start gap-3">
+                            <i class="fa-solid fa-mobile-screen-button text-emerald-500 text-base mt-0.5"></i>
+                            <div>
+                                <strong class="text-slate-800 dark:text-slate-200 block">Canal Asincrónico Institucional:</strong>
+                                Atención a borrradores de martes a jueves de 4:00 p.m. a 7:00 p.m.
+                            </div>
+                        </div>
+
+                        <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-start gap-3">
+                            <i class="fa-solid fa-book-bookmark text-cyan-500 text-base mt-0.5"></i>
+                            <div>
+                                <strong class="text-slate-800 dark:text-slate-200 block">Material de Apoyo:</strong>
+                                Módulo 5 MINED &bull; Lenguaje y Literatura (1.er Año Bachillerato).
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Modal Interactivo para Agregar Estudiante -->
+    <div id="add-student-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 no-print">
+        <div class="glass-card w-full max-w-md p-6 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 space-y-4 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 animate-fadeIn">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                <h4 class="font-extrabold text-base text-slate-800 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus text-brand-600 dark:text-brand-400"></i>
+                    <span>Agregar Nuevo Estudiante</span>
+                </h4>
+                <button type="button" onclick="closeAddStudentModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="add-student-form" onsubmit="saveNewStudent(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nombre Completo del Estudiante:</label>
+                    <input type="text" id="modal-student-name" required placeholder="Ej. María Josefa Delgado" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nivel Párrafo:</label>
+                        <select id="modal-paragraph-level" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="Logrado">Logrado</option>
+                            <option value="En Proceso" selected>En Proceso</option>
+                            <option value="Por Iniciar">Por Iniciar</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Conectores:</label>
+                        <select id="modal-connectors" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="Excelente">Excelente</option>
+                            <option value="Adecuado" selected>Adecuado</option>
+                            <option value="En revisión">En revisión</option>
+                            <option value="Por evaluar">Por evaluar</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Retroalimentación "2+1":</label>
+                        <input type="text" id="modal-feedback" placeholder="Ej. Enviado hoy" value="Enviado hoy" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Estado Guía:</label>
+                        <select id="modal-status" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="Entregado">Entregado</option>
+                            <option value="Pendiente" selected>Pendiente</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-3 flex justify-end gap-2">
+                    <button type="button" onclick="closeAddStudentModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-4 py-2 rounded-xl text-xs font-bold bg-brand-600 text-white hover:bg-brand-700 shadow-md transition">
+                        Guardar Estudiante
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Global Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+    <!-- Footer -->
+    <footer class="mt-16 border-t border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md py-8 text-xs text-slate-500 dark:text-slate-400">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+            <div class="space-y-1">
+                <p class="font-bold text-slate-700 dark:text-slate-300">
+                    Centro Escolar Rodrigo J. Leiva &bull; Modalidades Flexibles de Educación
+                </p>
+                <p>Guía didáctica para el docente tutor de Lenguaje y Literatura &bull; Módulo 5 (MINED / UES 2026)</p>
+            </div>
+            <div class="flex items-center gap-4 text-sm text-slate-400">
+                <span title="San Salvador, El Salvador"><i class="fa-solid fa-location-dot"></i> El Salvador</span>
+                <span>&bull;</span>
+                <span title="Licenciatura en Educación"><i class="fa-solid fa-graduation-cap"></i> UES 2026</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ================================================================= -->
+    <!-- JAVASCRIPT LOGIC -->
+    <!-- ================================================================= -->
+    <script>
+        /* -------------------------------------------------------------------
+           0. PRINT FUNCTIONALITY
+        ------------------------------------------------------------------- */
+        function triggerPrint() {
+            try {
+                window.print();
+            } catch (err) {
+                showToast("No se pudo iniciar el cuadro de impresión", "error");
+            }
+        }
+
+        /* -------------------------------------------------------------------
+           1. DARK MODE & TAB SWITCHING SYSTEM
+        ------------------------------------------------------------------- */
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+        // Check theme preference
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            darkIcon.classList.remove('hidden');
+            lightIcon.classList.add('hidden');
+        } else {
+            document.documentElement.classList.remove('dark');
+            lightIcon.classList.remove('hidden');
+            darkIcon.classList.add('hidden');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            darkIcon.classList.toggle('hidden');
+            lightIcon.classList.toggle('hidden');
+
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+            }
+        });
+
+        // Tab Navigation Switcher
+        function switchTab(tabId) {
+            // Hide all tab content
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            // Deactivate all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active-tab', 'bg-brand-600', 'text-white', 'shadow-md');
+                btn.classList.add('text-slate-600', 'dark:text-slate-400');
+            });
+
+            // Show selected tab content
+            const targetSection = document.getElementById('section-' + tabId);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            }
+
+            // Highlight selected tab button
+            const activeBtn = document.getElementById('tab-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.add('active-tab', 'bg-brand-600', 'text-white', 'shadow-md');
+                activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+
+        /* -------------------------------------------------------------------
+           2. TIMELINE STEPPER PLAYER LOGIC
+        ------------------------------------------------------------------- */
+        let currentStep = 1;
+        let autoplayInterval = null;
+
+        function updateTimelineUI() {
+            const totalSteps = 3;
+            for (let i = 1; i <= totalSteps; i++) {
+                const card = document.getElementById(`step-card-${i}`);
+                if (!card) continue;
+
+                if (i === currentStep) {
+                    card.classList.remove('opacity-70', 'border-transparent');
+                    card.classList.add('border-brand-500', 'shadow-xl', 'scale-[1.02]');
+                } else {
+                    card.classList.add('opacity-70', 'border-transparent');
+                    card.classList.remove('border-brand-500', 'shadow-xl', 'scale-[1.02]');
+                }
+            }
+
+            // Update Progress Line width
+            const progressBar = document.getElementById('timeline-progress-bar');
+            if (progressBar) {
+                const percentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
+                progressBar.style.width = `${percentage}%`;
+            }
+
+            // Disable buttons if bounds reached
+            document.getElementById('prev-step-btn').disabled = (currentStep === 1);
+            document.getElementById('next-step-btn').disabled = (currentStep === totalSteps);
+        }
+
+        function changeStep(delta) {
+            currentStep += delta;
+            if (currentStep < 1) currentStep = 1;
+            if (currentStep > 3) currentStep = 3;
+            updateTimelineUI();
+        }
+
+        function toggleStepAutoplay() {
+            const playIcon = document.getElementById('play-icon');
+            const playText = document.getElementById('play-text');
+
+            if (autoplayInterval) {
+                clearInterval(autoplayInterval);
+                autoplayInterval = null;
+                playIcon.className = "fa-solid fa-play";
+                playText.textContent = "Reproducir Ciclo";
+                showToast("Reproducción en pausa", "info");
+            } else {
+                playIcon.className = "fa-solid fa-pause";
+                playText.textContent = "Pausar Ciclo";
+                showToast("Reproduciendo ciclo automático", "success");
+                
+                autoplayInterval = setInterval(() => {
+                    currentStep = (currentStep % 3) + 1;
+                    updateTimelineUI();
+                }, 3000);
+            }
+        }
+
+
+        /* -------------------------------------------------------------------
+           3. RUBRIC FILTER LOGIC
+        ------------------------------------------------------------------- */
+        function filterRubric(category) {
+            const rubricCards = document.querySelectorAll('.rubric-card');
+            const filterBtns = document.querySelectorAll('.rubric-filter-btn');
+
+            filterBtns.forEach(btn => {
+                btn.classList.remove('bg-brand-600', 'text-white');
+                btn.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+            });
+
+            const selectedBtn = document.getElementById(`filter-${category}`);
+            if (selectedBtn) {
+                selectedBtn.classList.add('bg-brand-600', 'text-white');
+                selectedBtn.classList.remove('bg-slate-100', 'dark:bg-slate-800');
+            }
+
+            rubricCards.forEach(card => {
+                if (category === 'todos' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+
+        /* -------------------------------------------------------------------
+           4. GENERADOR "2 ACIERTOS + 1 MEJORA" REAL-TIME BINDING
+        ------------------------------------------------------------------- */
+        const studentInput = document.getElementById('fb-student-name');
+        const activitySelect = document.getElementById('fb-activity');
+        const acierto1Input = document.getElementById('fb-acierto-1');
+        const acierto2Input = document.getElementById('fb-acierto-2');
+        const mejoraInput = document.getElementById('fb-mejora');
+        const cierreSelect = document.getElementById('fb-cierre');
+
+        function updateFeedbackPreview() {
+            const name = studentInput.value.trim() || 'Estudiante';
+            const firstName = name.split(' ')[0];
+
+            document.getElementById('pv-student').textContent = name;
+            document.getElementById('pv-greeting-name').textContent = firstName;
+            document.getElementById('pv-activity').textContent = activitySelect.value;
+            document.getElementById('pv-a1').textContent = acierto1Input.value || 'Has demostrado un excelente esfuerzo en la redacción.';
+            document.getElementById('pv-a2').textContent = acierto2Input.value || 'Tu entrega se realizó de manera puntual.';
+            document.getElementById('pv-mejora-text').textContent = mejoraInput.value || 'Recuerda revisar la ortografía antes de entregar el sábado.';
+            document.getElementById('pv-cierre-text').textContent = cierreSelect.value;
+        }
+
+        [studentInput, activitySelect, acierto1Input, acierto2Input, mejoraInput, cierreSelect].forEach(el => {
+            if (el) el.addEventListener('input', updateFeedbackPreview);
+        });
+
+        const presets = {
+            cohesion: {
+                a1: "Identificaste correctamente la oracion principal en la lectura de 'El alba'.",
+                a2: "Empleaste adecuadamente los nexos de enlace 'por lo tanto' y 'además'.",
+                mejora: "Asegúrate de separar las ideas complejas mediante punto y seguido en lugar de comas seguidas."
+            },
+            idea: {
+                a1: "Definiste con total claridad la idea central en el escrito sobre Edison.",
+                a2: "Escribiste oraciones secundarias que apoyan directamente al tema principal.",
+                mejora: "Procura redactar una oración de cierre que sintetice la conclusión del párrafo."
+            },
+            conectores: {
+                a1: "La secuencia temporal de tu narrativa es lógica e interesante.",
+                a2: "Mostraste gran creatividad al redactar el desarrollo del texto.",
+                mejora: "Sustituye la repetición del conector 'y' por alternativas como 'asimismo' o 'sin embargo'."
+            }
+        };
+
+        function loadPreset(key) {
+            if (presets[key]) {
+                acierto1Input.value = presets[key].a1;
+                acierto2Input.value = presets[key].a2;
+                mejoraInput.value = presets[key].mejora;
+                updateFeedbackPreview();
+                showToast("Plantilla cargada con éxito", "success");
+            }
+        }
+
+        function copyFeedbackToClipboard() {
+            const name = studentInput.value.trim() || 'Estudiante';
+            const firstName = name.split(' ')[0];
+            const textToCopy = `¡Hola, ${firstName}! He revisado tu avance en "${activitySelect.value}":\n\n` +
+                `✅ Lo que has logrado muy bien:\n` +
+                `1. ${acierto1Input.value}\n` +
+                `2. ${acierto2Input.value}\n\n` +
+                `💡 Tu reto de mejora para esta semana:\n` +
+                `• ${mejoraInput.value}\n\n` +
+                `${cierreSelect.value}\n\n` +
+                `— Centro Escolar Rodrigo J. Leiva (Lenguaje y Literatura)`;
+
+            const dummyTextArea = document.createElement("textarea");
+            dummyTextArea.value = textToCopy;
+            document.body.appendChild(dummyTextArea);
+            dummyTextArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast("¡Retroalimentación copiada al portapapeles!", "success");
+            } catch (err) {
+                showToast("Error al copiar. Selecciona manualmente.", "error");
+            }
+            document.body.removeChild(dummyTextArea);
+        }
+
+
+        /* -------------------------------------------------------------------
+           5. PRÁCTICA INTERACTIVA "EL PÁRRAFO" QUIZ ENGINE
+        ------------------------------------------------------------------- */
+        const quizData = [
+            {
+                title: "Pregunta 1 &bull; Caso Thomas Alva Edison",
+                excerpt: `"Thomas Alva Edison realizó más de mil intentos fallidos antes de perfeccionar la bombilla incandescente. Sin embargo, su perseverancia y rigor experimental demostraron que el fracaso es únicamente el primer paso hacia la innovación técnica."`,
+                prompt: "¿Qué tipo de párrafo predomina según la intención y cuál es su conector de cohesión de contraste?",
+                options: [
+                    { text: "Párrafo Expositivo / Conector: 'Sin embargo'", correct: true, exp: "Correcto. Expone hechos informativos sobre Edison y utiliza 'Sin embargo' como conector adversativo para contrastar los fracasos con el éxito." },
+                    { text: "Párrafo Poético / Conector: 'Thomas'", correct: false, exp: "Incorrecto. 'Thomas' es un sustantivo propio, no un conector sintáctico de cohesión." },
+                    { text: "Párrafo Descriptivo puro / Conector: 'bombilla'", correct: false, exp: "Incorrecto. El texto no se limita a describir cualidades físicas, sino a explicar un proceso y su significado." },
+                    { text: "Párrafo Conclusivo / Conector: 'realizó'", correct: false, exp: "Incorrecto. 'Realizó' es una forma verbal conjugada." }
+                ]
+            },
+            {
+                title: "Pregunta 2 &bull; Análisis de Texto 'El alba'",
+                excerpt: `"Las sombras de la noche comenzaban a disiparse lentamente en el horizonte. Un tenue resplandor dorado teñía las cumbres de las montañas, anunciando el despertar del nuevo día."`,
+                prompt: "¿Cuál es la función sintáctica predominante de este párrafo dentro de un relato?",
+                options: [
+                    { text: "Párrafo Introductorio y Descriptivo de ambiente", correct: true, exp: "¡Excelente! Sitúa al lector en el marco espacio-temporal del amanecer mediante recursos descriptivos." },
+                    { text: "Párrafo de Argumentación científica", correct: false, exp: "Incorrecto. No presenta tesis ni argumentos lógicos formales." },
+                    { text: "Párrafo de Cierre o Conclusión final", correct: false, exp: "Incorrecto. Describe el inicio del día, propio de un planteamiento inicial." }
+                ]
+            },
+            {
+                title: "Pregunta 3 &bull; Uso de Nexos en la Lección 4",
+                excerpt: `"El estudiante en Modalidad Flexible organiza sus tiempos entre el trabajo y el estudio; _______, logra completar sus guías semanales con disciplina."`,
+                prompt: "¿Qué conector de consecuencia completa de forma coherente la oración compuesta?",
+                options: [
+                    { text: "por consiguiente", correct: true, exp: "¡Exacto! 'Por consiguiente' es un conector consecutivo que une la causa (organización) con el efecto (logro)." },
+                    { text: "pero jamás", correct: false, exp: "Incorrecto. Rompe la coherencia positiva del enunciado." },
+                    { text: "en lugar de", correct: false, exp: "Incorrecto. 'En lugar de' expresa una sustitución o alternativa." }
+                ]
+            }
+        ];
+
+        let currentQuizIndex = 0;
+        let quizStarsScore = 0;
+        let optionSelected = false;
+
+        function loadQuizQuestion() {
+            optionSelected = false;
+            const q = quizData[currentQuizIndex];
+            
+            document.getElementById('quiz-question-num').textContent = `${currentQuizIndex + 1} / ${quizData.length}`;
+            document.getElementById('quiz-title').innerHTML = q.title;
+            document.getElementById('quiz-excerpt').textContent = q.excerpt;
+            document.getElementById('quiz-prompt').textContent = q.prompt;
+
+            const banner = document.getElementById('quiz-result-banner');
+            banner.classList.add('hidden');
+
+            const container = document.getElementById('quiz-options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-opt-btn w-full p-3.5 rounded-2xl text-xs font-semibold text-left bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 hover:bg-brand-50 dark:hover:bg-brand-950/40 hover:border-brand-500 transition flex items-center justify-between";
+                btn.onclick = () => selectQuizOption(idx);
+                btn.innerHTML = `
+                    <span>${opt.text}</span>
+                    <i class="fa-regular fa-circle text-slate-400"></i>
+                `;
+                container.appendChild(btn);
+            });
+
+            document.getElementById('quiz-next-btn').disabled = true;
+        }
+
+        function selectQuizOption(optIdx) {
+            if (optionSelected) return;
+            optionSelected = true;
+
+            const q = quizData[currentQuizIndex];
+            const selectedOpt = q.options[optIdx];
+            const optButtons = document.querySelectorAll('.quiz-opt-btn');
+
+            optButtons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === optIdx) {
+                    if (selectedOpt.correct) {
+                        btn.classList.add('bg-emerald-100', 'dark:bg-emerald-900/60', 'border-emerald-500', 'text-emerald-800', 'dark:text-emerald-200');
+                        btn.querySelector('i').className = "fa-solid fa-circle-check text-emerald-500 text-base";
+                    } else {
+                        btn.classList.add('bg-rose-100', 'dark:bg-rose-900/60', 'border-rose-500', 'text-rose-800', 'dark:text-rose-200');
+                        btn.querySelector('i').className = "fa-solid fa-circle-xmark text-rose-500 text-base";
+                    }
+                }
+            });
+
+            // Banner feedback
+            const banner = document.getElementById('quiz-result-banner');
+            const bannerTitle = document.getElementById('quiz-banner-title');
+            const bannerExp = document.getElementById('quiz-banner-explanation');
+
+            banner.classList.remove('hidden');
+            if (selectedOpt.correct) {
+                quizStarsScore++;
+                banner.className = "p-4 rounded-2xl border bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-xs space-y-1";
+                bannerTitle.className = "flex items-center gap-2 font-bold text-sm text-emerald-700 dark:text-emerald-300";
+                bannerTitle.innerHTML = `<i class="fa-solid fa-sparkles"></i> ¡Respuesta Correcta!`;
+                showToast("+1 Estrella lograda", "success");
+            } else {
+                banner.className = "p-4 rounded-2xl border bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 text-xs space-y-1";
+                bannerTitle.className = "flex items-center gap-2 font-bold text-sm text-rose-700 dark:text-rose-300";
+                bannerTitle.innerHTML = `<i class="fa-solid fa-circle-info"></i> Revisa la Explicación`;
+            }
+
+            bannerExp.textContent = selectedOpt.exp;
+
+            // Score stars update
+            document.getElementById('quiz-score-stars').textContent = `${quizStarsScore} / ${quizData.length} Estrellas`;
+
+            document.getElementById('quiz-next-btn').disabled = false;
+        }
+
+        function nextQuizQuestion() {
+            if (currentQuizIndex < quizData.length - 1) {
+                currentQuizIndex++;
+                loadQuizQuestion();
+            } else {
+                showToast(`¡Práctica completada! Obtuviste ${quizStarsScore} de 3 estrellas.`, "success");
+                if (quizStarsScore === quizData.length) {
+                    triggerConfetti();
+                }
+            }
+        }
+
+        function resetQuiz() {
+            currentQuizIndex = 0;
+            quizStarsScore = 0;
+            document.getElementById('quiz-score-stars').textContent = `0 / ${quizData.length} Estrellas`;
+            loadQuizQuestion();
+            showToast("Práctica reiniciada", "info");
+        }
+
+
+        /* -------------------------------------------------------------------
+           6. AUTOEVALUACIÓN & COEVALUACIÓN LOGIC
+        ------------------------------------------------------------------- */
+        function updateSelfEval() {
+            const checkboxes = document.querySelectorAll('.eval-checkbox');
+            let checkedCount = 0;
+
+            checkboxes.forEach(cb => {
+                if (cb.checked) checkedCount++;
+            });
+
+            const total = checkboxes.length;
+            const percentage = Math.round((checkedCount / total) * 100);
+
+            document.getElementById('checklist-counter').textContent = `${checkedCount} / ${total} Cumplidos`;
+            document.getElementById('eval-percentage-text').textContent = `${percentage}%`;
+
+            const circle = document.getElementById('eval-circle-progress');
+            if (circle) {
+                const offset = 100 - percentage;
+                circle.style.strokeDashoffset = offset;
+            }
+
+            const badge = document.getElementById('eval-status-badge');
+            const confettiBtn = document.getElementById('confetti-btn');
+
+            if (percentage === 100) {
+                badge.className = "p-3 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-xs text-emerald-800 dark:text-emerald-300 font-bold border border-emerald-300";
+                badge.textContent = "🏆 ¡Felicidades! Has completado todos los criterios de la Lección 4.";
+                confettiBtn.disabled = false;
+                triggerConfetti();
+            } else if (percentage >= 60) {
+                badge.className = "p-3 rounded-2xl bg-amber-100 dark:bg-amber-950 text-xs text-amber-800 dark:text-amber-300 font-semibold";
+                badge.textContent = "⚡ Buen avance. Revisa los ítems pendientes para la entrega del sábado.";
+                confettiBtn.disabled = true;
+            } else {
+                badge.className = "p-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-xs text-slate-600 dark:text-slate-300 font-medium";
+                badge.textContent = "Completa los ítems para evaluar tu progreso en la Lección 4.";
+                confettiBtn.disabled = true;
+            }
+        }
+
+        function saveCoevalObservation() {
+            const peer = document.getElementById('coeval-peer-name').value.trim();
+            const comment = document.getElementById('coeval-comment').value.trim();
+
+            if (!peer || !comment) {
+                showToast("Por favor completa el nombre y la observación", "error");
+                return;
+            }
+
+            showToast(`Observación de coevaluación guardada para ${peer}`, "success");
+            document.getElementById('coeval-peer-name').value = '';
+            document.getElementById('coeval-comment').value = '';
+        }
+
+
+        /* -------------------------------------------------------------------
+           7. FICHA DE SEGUIMIENTO (ESTUDIANTES Y EJEMPLOS PERSISTENCIA)
+        ------------------------------------------------------------------- */
+        const defaultStudents = [
+            { name: "Ana Gladys Rivas", paragraphLevel: "Logrado", connectors: "Adecuado", feedback21: "Enviado 12/Oct", status: "Entregado" },
+            { name: "Carlos Eduardo Martínez", paragraphLevel: "En Proceso", connectors: "En revisión", feedback21: "Enviado 14/Oct", status: "Pendiente" },
+            { name: "José Mauricio López", paragraphLevel: "Logrado", connectors: "Excelente", feedback21: "Enviado 11/Oct", status: "Entregado" },
+            { name: "Sonia Beatriz Ramos", paragraphLevel: "En Proceso", connectors: "Adecuado", feedback21: "Enviado 15/Oct", status: "Entregado" },
+            { name: "Kevin Alexander Torres", paragraphLevel: "Por Iniciar", connectors: "Por evaluar", feedback21: "Pendiente", status: "Pendiente" },
+            { name: "María José Delgado", paragraphLevel: "Logrado", connectors: "Excelente", feedback21: "Enviado 16/Oct", status: "Entregado" }
+        ];
+
+        function getStoredStudents() {
+            const stored = localStorage.getItem('mined_students_list');
+            return stored ? JSON.parse(stored) : defaultStudents;
+        }
+
+        function saveStoredStudents(list) {
+            localStorage.setItem('mined_students_list', JSON.stringify(list));
+        }
+
+        function renderTrackingTable() {
+            const tbody = document.getElementById('tracking-tbody');
+            if (!tbody) return;
+
+            const list = getStoredStudents();
+            tbody.innerHTML = '';
+
+            list.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/40 transition";
+                
+                const levelBadgeClass = item.paragraphLevel === 'Logrado' 
+                    ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' 
+                    : item.paragraphLevel === 'En Proceso'
+                    ? 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300'
+                    : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300';
+
+                const statusBadgeClass = item.status === 'Entregado'
+                    ? 'bg-brand-100 text-brand-700 dark:bg-brand-950 dark:text-brand-300'
+                    : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300';
+
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-800 dark:text-slate-200">${item.name}</td>
+                    <td class="p-3">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${levelBadgeClass}">
+                            ${item.paragraphLevel}
+                        </span>
+                    </td>
+                    <td class="p-3 text-slate-600 dark:text-slate-300">${item.connectors}</td>
+                    <td class="p-3 text-slate-600 dark:text-slate-300">${item.feedback21}</td>
+                    <td class="p-3">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${statusBadgeClass}">
+                            ${item.status}
+                        </span>
+                    </td>
+                    <td class="p-3 text-center no-print">
+                        <button onclick="deleteStudentRow(${index})" class="text-rose-500 hover:text-rose-700 p-1 transition" title="Eliminar registro">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /* Modal logic for adding students */
+        function addStudentRow() {
+            const modal = document.getElementById('add-student-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.getElementById('modal-student-name').focus();
+            }
+        }
+
+        function closeAddStudentModal() {
+            const modal = document.getElementById('add-student-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function saveNewStudent(e) {
+            e.preventDefault();
+            const name = document.getElementById('modal-student-name').value.trim();
+            const level = document.getElementById('modal-paragraph-level').value;
+            const connectors = document.getElementById('modal-connectors').value;
+            const feedback = document.getElementById('modal-feedback').value.trim() || 'Pendiente';
+            const status = document.getElementById('modal-status').value;
+
+            if (!name) {
+                showToast("Por favor ingresa el nombre del estudiante", "error");
+                return;
+            }
+
+            const list = getStoredStudents();
+            list.push({
+                name: name,
+                paragraphLevel: level,
+                connectors: connectors,
+                feedback21: feedback,
+                status: status
+            });
+
+            saveStoredStudents(list);
+            renderTrackingTable();
+            closeAddStudentModal();
+            document.getElementById('add-student-form').reset();
+            showToast(`Estudiante "${name}" agregado con éxito`, "success");
+        }
+
+        function deleteStudentRow(index) {
+            const list = getStoredStudents();
+            const removed = list.splice(index, 1);
+            saveStoredStudents(list);
+            renderTrackingTable();
+            showToast(`Registro de "${removed[0]?.name || 'Estudiante'}" eliminado`, "info");
+        }
+
+        function resetTrackingTable() {
+            saveStoredStudents(defaultStudents);
+            renderTrackingTable();
+            showToast("Ejemplos cargados e inicializados en la tabla", "success");
+        }
+
+        function submitStudentQuery(e) {
+            e.preventDefault();
+            const name = document.getElementById('query-student-name').value;
+            showToast(`¡Gracias ${name}! Tu consulta ha sido enviada al buzón del tutor.`, "success");
+            e.target.reset();
+        }
+
+
+        /* -------------------------------------------------------------------
+           8. LIGHTWEIGHT CANVAS CONFETTI ENGINE
+        ------------------------------------------------------------------- */
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#4f46e5', '#10b981', '#06b6d4', '#f59e0b', '#ef4444'];
+
+            for (let i = 0; i < 80; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vy: Math.random() * 3 + 2,
+                    vx: Math.random() * 2 - 1,
+                    rot: Math.random() * 360
+                });
+            }
+
+            let animationFrame;
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let alive = false;
+
+                particles.forEach(p => {
+                    p.y += p.vy;
+                    p.x += p.vx;
+                    p.rot += 2;
+
+                    if (p.y < canvas.height) alive = true;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rot * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    ctx.restore();
+                });
+
+                if (alive) {
+                    animationFrame = requestAnimationFrame(render);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    cancelAnimationFrame(animationFrame);
+                }
+            }
+
+            render();
+        }
+
+
+        /* -------------------------------------------------------------------
+           9. TOAST NOTIFICATION UTILITY
+        ------------------------------------------------------------------- */
+        function showToast(message, type = "info") {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-rose-600' : 'bg-brand-600';
+
+            toast.className = `${bgClass} text-white px-4 py-3 rounded-2xl shadow-2xl text-xs font-bold flex items-center gap-2 transform translate-y-5 opacity-0 transition-all duration-300 pointer-events-auto`;
+            toast.innerHTML = `
+                <i class="${type === 'success' ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-info'} text-sm"></i>
+                <span>${message}</span>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-5', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-5', 'opacity-0');
+                setTimeout(() => {
+                    if (toast.parentNode) container.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+
+        /* -------------------------------------------------------------------
+           10. INITIALIZATION ON WINDOW LOAD
+        ------------------------------------------------------------------- */
+        window.onload = function() {
+            updateFeedbackPreview();
+            loadQuizQuestion();
+            renderTrackingTable();
+            updateTimelineUI();
+        };
+    </script>
+</body>
+</html>
